@@ -3,25 +3,193 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
+  <div class=navBar>
+    <button class='homeButton' id='Twittler'><h1>Twittler</h1></button>
+    <button id=newTweets>Updates: OFF</button>
+  </div>
+  <div class="home"></div>
+  <div class="timelines"></div>
+
     <script>
 
       $(document).ready(function(){
-        var $body = $('body');
-        $body.html('');
-
+        //$body.html('');
         var index = streams.home.length - 1;
         while(index >= 0){
           var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
+          var $container = $('<div class=container></div>');
+          var $tweet = $('<div class=tweet></div>');
+          var userLink = streams.home[index].user
+          var $userLink = $('<button id='+userLink+' class=userButton></button>');
+          var $tweetDate = $('<span class=time></span>');
+          $tweetDate.text(streams.home[index].created_at);
+          $userLink.text("@" + streams.home[index].user + ": ");
+          //console.log(streams.home[index]);
+          $tweet.text(tweet.message);
+          //$('<span></span>').appendTo($tweet);
+          $userLink.appendTo($container);
+          $tweetDate.appendTo($container);
+          $tweet.appendTo($container);
+          $container.appendTo($("div.home"));
           index -= 1;
         }
-
+        var getTimeline = function(tweeter) {
+          //console.log("user = ",typeof tweeter);
+          //console.log(tweeter);
+          var userIndex = (streams.users[tweeter].length-1)/*-$('div#'+tweeter+'.userTimeline').*/;
+          //console.log(userIndex);
+          //var $userTimeline = $('<div class=userTimeline id='+tweeter+'></div>');
+          //$userTimeline.appendTo($('div.timelines'));
+          while(userIndex >= 0) {
+            var userTweet = streams.users[tweeter][userIndex];
+            var $userContainer = $('<div class=usercontainer></div>');
+            var $tweet = $('<div class=tweet></div>');
+            var username = streams.users[tweeter][userIndex].user;
+            //console.log("userLink = ",username," userIndex = ",userIndex);
+            var $username = $('<button id='+username+' class=homeButton></button>');
+            var $tweetDate = $('<span class=time></span>');
+            $tweetDate.text(streams.users[tweeter][userIndex].created_at);
+            //console.log("username = ",streams.users[tweeter][userIndex].user)
+            $username.text("@" + streams.users[tweeter][userIndex].user + ": ");
+            //console.log(userTweet.message);
+            $tweet.text(userTweet.message);
+            $username.appendTo($userContainer);
+            //console.log($container);
+            $tweetDate.appendTo($userContainer);
+            $tweet.appendTo($userContainer);
+            $userContainer.appendTo($('div#'+tweeter+'.userTimeline'));
+            userIndex -= 1;
+          }
+          setButtons();
+        }
+        var timelineUser;
+        var alreadySet = [];
+        var intervalID;
+        var newTweetsRunning = false;
+        var newTweets = function() {
+          console.log("newTweets called");
+          if (streams.home.length !== $('div.home').children().length) {
+            var startIndex = $('div.home').children().length;
+            var endIndex = streams.home.length-1;
+            console.log("start =",startIndex," end = ",endIndex);
+            while(endIndex >= startIndex) {
+              var tweet = streams.home[startIndex];
+              //console.log("tweet = ",tweet);
+              var $userContainer = $('<div class=usercontainer></div>');
+              var $tweet = $('<div class=tweet></div>');
+              //var tweetUser = streams.home[startIndex].user;
+              console.log(tweet.user)
+              var $userLink = $('<button id='+tweet.user+' class=userButton></button>');
+              var $tweetDate = $('<span class=time></span>');
+              $tweetDate.text(streams.home[startIndex].created_at);
+              $userLink.text("@" + streams.home[startIndex].user + ": ");
+              //console.log(streams.home[index]);
+              $tweet.text(tweet.message);
+              $userLink.appendTo($container);
+              $tweetDate.appendTo($container);
+              $tweet.appendTo($container);
+              $container.prependTo($("div.home"));
+              startIndex += 1;
+            }
+          }
+          console.log('updating userTimeline...');
+          console.log('alreadySet = ',alreadySet);
+          for(var i=0; i<alreadySet.length; i++) {
+            var username = alreadySet[i];
+            var startIndex = $('div#'+username+'.userTimeline').children().length;
+            var endIndex = streams.users[username].length-1;
+            while(endIndex >= startIndex) {
+              var tweet = streams.users[username][startIndex];
+              //console.log("tweet = ",tweet);
+              var $userContainer = $('<div class=usercontainer></div>');
+              var $tweet = $('<div class=tweet></div>');
+              //var tweetUser = streams.home[startIndex].user;
+              var $userLink = $('<button id='+username+' class=homeButton></button>');
+              var $tweetDate = $('<span class=time></span>');
+              $tweetDate.text(streams.users[username][startIndex].created_at);
+              $userLink.text("@" + username + ": ");
+              //console.log(streams.home[index]);
+              $tweet.text(tweet.message);
+              $userLink.appendTo($userContainer);
+              $tweetDate.appendTo($userContainer);
+              $tweet.appendTo($userContainer);
+              $userContainer.prependTo($("div#"+username+".userTimeline"));
+              startIndex += 1;
+            }
+          }
+          setButtons();
+          console.log('newTweets finished.');
+        }
+        var setButtons = function() {
+          $('button.homeButton').on('click', function() {
+            //$body.html('');
+            //console.log("home button clicked")
+            if($('.home').css('display') === 'none') {
+              //console.log("setting home display to inline");
+              $('.home').css('display','inline');
+            }
+            if($('.timelines').css('display') === 'inline') {
+              //console.log("setting timelines display to none");
+              $('.timelines').css('display','none');
+            }
+            if($('div#'+timelineUser+'.userTimeline').css('display')!=='none') {
+              $('div#'+timelineUser+'.userTimeline').css('display','none');
+            }
+          });
+          $('button.userButton').on('click', function() {
+            //var clicker = $(this)[0].id;
+            timelineUser = $(this)[0].id;
+            //console.log("clicker = ",clicker);
+            //console.log("user button clicked")
+            // var $userTimeline = $('<div class=userTimeline id='+timelineUser+'></div>');
+            //console.log("$userTimeline.length = ",$('div#'+timelineUser+'.timelines').length)
+            if($('div#'+timelineUser+'.userTimeline').length === 0) {
+              $('<div class=userTimeline id='+timelineUser+'></div>').appendTo($('div.timelines'));
+              console.log("appended usertimeline")
+            }
+            if($('.home').css('display') === 'inline') {
+              //console.log("setting home display to none");
+              $('.home').css('display','none');
+            }
+            if($('.timelines').css('display') === 'none') {
+              //console.log("setting timelines display to inline");
+              $('.timelines').css('display','inline');
+            }
+            if($('div#'+timelineUser+'.userTimeline').css('display')!=='inline') {
+              $('div#'+timelineUser+'.userTimeline').css('display','inline');
+            }
+            //console.log("childNodes.length = ",$('div#'+timelineUser+'.userTimeline')[0].childNodes.length);
+            if(alreadySet.indexOf(timelineUser) === -1) {
+              //console.log("streams.users[timelineUser]length = ",streams.users[timelineUser].length);
+              //console.log("$('div#'+timelineUser+'.userTimeline')[0].childNodes.length = ",$('div#'+timelineUser+'.userTimeline')[0].childNodes.length);
+              getTimeline(timelineUser);
+              console.log("getTimeline finished")
+              alreadySet.push(timelineUser);
+            }
+          })
+        }
+        setButtons();
+        $('button#newTweets').on('click', function() {
+          if (!newTweetsRunning) {
+            intervalID = setInterval(newTweets, 3000);
+            newTweetsRunning = true;
+            $('button#newTweets').html('Updates: ON');
+            console.log('newTweets is running...');
+          } else if (newTweetsRunning) {
+            clearInterval(intervalID);
+            newTweetsRunning = false;
+            $('button#newTweets').html('Updates: OFF');
+            console.log('newTweets stopped.');
+          }
+        })
+        //newTweets();
+        // var $userLink = $('<a href = "userhome.html"></a>');
+        // $userLink.text("home");
+        // $userLink.appendTo($body);
       });
-
     </script>
   </body>
 </html>
