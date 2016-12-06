@@ -174,7 +174,7 @@
         setButtons();
         $('button#newTweets').on('click', function() {
           if (!newTweetsRunning) {
-            intervalID = setInterval(newTweets, 1500);
+            intervalID = setInterval(newTweets, 3000);
             newTweetsRunning = true;
             $('button#newTweets').html('Updates: ON');
             console.log('newTweets is running...');

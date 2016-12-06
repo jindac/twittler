@@ -1,0 +1,74 @@
+body{
+  //height: inherit;
+  //width: inherit;
+  font-family: sans-serif;
+}
+
+div {
+  //color: blue;
+  //font-size: inherit;
+}
+a {
+  color: purple;
+}
+button {
+  padding: 0px;
+  border: 0px;
+  margin: 0px 10px 0px 0px;
+  overflow: visible;
+  background: transparent;
+  display: inline;
+  float: left;
+  font-size: inherit;
+  color: #55acee;
+}
+#homeButton {
+  border: 2px solid black;
+  padding: 1px;
+}
+.home {
+  width: 60%;
+  display: inline;
+  overflow: scroll;
+  background-color: #55acee;
+  margin: auto;
+}
+.user {
+  color: #55acee;
+}
+.tweet {
+  color: black;
+  float: left;
+  width: 100%;
+  font-size: larger;
+}
+/*.time {
+  float: left;*/
+}
+.username {
+  float: left;
+  margin-right: 50%;
+}
+.container {
+  //width: 100%;
+  margin: 10px 10px 10px 10px;
+}
+.usercontainer{
+  margin: 10px 10px 10px 10px;
+}
+.timelines {
+  display: none;
+}
+#Twittler {
+  padding-right: 85%;
+  font: ;
+}
+span {
+  float: right;
+  font-size: small;:
+}
+button#newTweets {
+  display: block;
+  margin-right: 85%;
+
+}
